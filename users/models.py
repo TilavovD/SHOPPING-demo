@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-# from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 GENDER_TYPES = (
     ("male", "male"),
     ("female", "female"),
@@ -13,7 +13,18 @@ GENDER_TYPES = (
 
 class User(AbstractUser):
     middle_name = models.CharField("middle_name", max_length=256, blank=True)
+    username = models.CharField(
+        _("username"),
+        max_length=150,
+        unique=True,
+        help_text=_(
+            "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
+        ),
 
+        error_messages={
+            "unique": _("A user with that username already exists."),
+        },
+    )
     gender = models.CharField(max_length=15, choices=GENDER_TYPES, default=GENDER_TYPES[2][0])
     birth_date = models.DateField(null=True)
     phone_number = models.CharField(max_length=20, blank=True)
