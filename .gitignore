@@ -206,7 +206,7 @@ GitHub.sublime-settings
 
 .templates
 staticfiles/
-common/staticfiles/
+users/staticfiles/
 core/local_settings.py
 core/templates/index.html
 *.suo
