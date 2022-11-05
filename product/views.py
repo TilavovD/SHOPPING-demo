@@ -30,11 +30,17 @@ class ProductListAPIView(ListAPIView):
 
         in_discount = self.request.query_params.get('in_discount', '')
         if in_discount == 'true':
-            return queryset.filter(discount_percent__gt=0)
+            queryset = queryset.filter(discount_percent__gt=0)
         elif in_discount == 'false':
-            return queryset.filter(discount_percent=0)
-        else:
-            return queryset
+            queryset = queryset.filter(discount_percent=0)
+
+        # category_name = self.request.query_params.get('category', None)
+        # while category_name:
+        #     temp_quaryset = queryset.filter(category=category_name)
+        #     if temp_quaryset.count() > 0:
+        #         return temp_quaryset
+        #     category_name =
+        return queryset
 
 
 class ProductDetailAPIView(RetrieveAPIView):

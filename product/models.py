@@ -5,13 +5,16 @@ from django.utils import timezone
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(max_length=128)
-    sub_categories = models.ManyToManyField(
+    parent_category = models.ForeignKey(
         'Category',
-        related_name='parent_category',
-        blank=True
+        related_name='child_categories',
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE
     )
 
     class Meta:
+        verbose_name_plural = 'Categories'
         ordering = ['name']
 
     def __str__(self):
