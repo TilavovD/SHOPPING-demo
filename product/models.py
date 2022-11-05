@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 # Create your models here.
@@ -19,6 +20,7 @@ class Category(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=128)
+    image = models.ImageField(upload_to='products')
     description = models.TextField()
     category = models.ForeignKey(
         Category,
@@ -28,6 +30,7 @@ class Product(models.Model):
 
     cost = models.PositiveIntegerField()
     discount_percent = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         ordering = ['name']
