@@ -28,7 +28,7 @@ class Product(models.Model):
         on_delete=models.CASCADE
     )
 
-    cost = models.PositiveIntegerField()
+    price = models.PositiveIntegerField()
     discount_percent = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(default=timezone.now)
 
@@ -36,4 +36,7 @@ class Product(models.Model):
         ordering = ['name']
 
     def __str__(self):
-        return f"{self.name} | ${self.cost}"
+        return f"{self.name} | ${self.price}"
+
+    def get_price_after_discount(self):
+        return self.price * (100 - self.discount_percent) / 100
