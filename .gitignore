@@ -310,4 +310,5 @@ ehthumbs_vista.db
 *.stackdump
 
 # Folder config file
-
+media-files/products
+media-files/user
