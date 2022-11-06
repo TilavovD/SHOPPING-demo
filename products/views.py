@@ -1,10 +1,15 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, DestroyAPIView
 
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import Category, Product
-from .serializers import CategorySerializer, ProductSerializer
+from .models import Category, Product, FavouriteProduct
+from .serializers import (
+    CategorySerializer,
+    ProductSerializer,
+    FavouriteProductSerializer,
+    AddFavouriteProductSerializer,
+)
 
 
 # Create your views here.
@@ -46,3 +51,25 @@ class ProductListAPIView(ListAPIView):
 class ProductDetailAPIView(RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+
+class FavouriteProductListAPIView(ListAPIView):
+    serializer_class = FavouriteProductSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return FavouriteProduct.objects.filter(user=user)
+
+
+class AddFavouriteProductListAPIView(CreateAPIView):
+    serializer_class = AddFavouriteProductSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+# class DeleteFavouriteProductListAPIView(DestroyAPIView):
+#     serializer_class = AddFavouriteProductSerializer
+#
+#     def perform_destroy(self, instance):
+

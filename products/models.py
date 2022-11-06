@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
+from users.models import User
+
 
 # Create your models here.
 class Category(models.Model):
@@ -43,3 +45,19 @@ class Product(models.Model):
 
     def get_price_after_discount(self):
         return self.price * (100 - self.discount_percent) / 100
+
+
+class FavouriteProduct(models.Model):
+    user = models.ForeignKey(
+        User,
+        related_name='favourite_products',
+        on_delete=models.CASCADE
+    )
+    product = models.ForeignKey(
+        Product,
+        related_name='users_liked_by',
+        on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return f"{self.product.name} liked by {self.user}"
