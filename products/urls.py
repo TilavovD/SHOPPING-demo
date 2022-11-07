@@ -6,7 +6,8 @@ from .views import (
     ProductListAPIView,
     ProductDetailAPIView,
     FavouriteProductListAPIView,
-    AddFavouriteProductListAPIView,
+    AddFavouriteProductAPIView,
+    DeleteFavouriteProductAPIView,
 
 )
 
@@ -19,6 +20,7 @@ urlpatterns = [
 
     path('categories/', CategoryListAPIView.as_view(), name='category-list'),
     path('wishlist/', FavouriteProductListAPIView.as_view(), name='wishlist'),
-    path('wishlist/add/', AddFavouriteProductListAPIView.as_view(), name='wishlist-add'),
+    path('wishlist/add/', AddFavouriteProductAPIView.as_view(), name='wishlist-add'),
+    path('wishlist/<int:pk>/delete/', DeleteFavouriteProductAPIView.as_view(), name='wishlist-item-delte'),
 
 ]

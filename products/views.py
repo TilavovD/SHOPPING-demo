@@ -61,15 +61,13 @@ class FavouriteProductListAPIView(ListAPIView):
         return FavouriteProduct.objects.filter(user=user)
 
 
-class AddFavouriteProductListAPIView(CreateAPIView):
+class AddFavouriteProductAPIView(CreateAPIView):
     serializer_class = AddFavouriteProductSerializer
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
-# class DeleteFavouriteProductListAPIView(DestroyAPIView):
-#     serializer_class = AddFavouriteProductSerializer
-#
-#     def perform_destroy(self, instance):
-
+class DeleteFavouriteProductAPIView(DestroyAPIView):
+    queryset = FavouriteProduct.objects.all()
+    serializer_class = AddFavouriteProductSerializer
