@@ -1,13 +1,13 @@
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 
 from .models import CartItem
-from .serializers import CartItemSerializer
+from .serializers import CartItemListSerializer, CartItemSerializer
 
 
 # Create your views here.
 class CartListAPIView(ListAPIView):
-    serializer_class = CartItemSerializer
+    serializer_class = CartItemListSerializer
 
     def get_queryset(self):
         user = self.request.user
@@ -16,7 +16,7 @@ class CartListAPIView(ListAPIView):
     def list(self, request):
         # Note the use of `get_queryset()` instead of `self.queryset`
         queryset = self.get_queryset()
-        serializer = CartItemSerializer(queryset, many=True)
+        serializer = CartItemListSerializer(queryset, many=True)
 
         final_price = 0
         total_amount_saved = 0
@@ -31,3 +31,8 @@ class CartListAPIView(ListAPIView):
         }
 
         return Response(result_data)
+
+
+class CartItemAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
