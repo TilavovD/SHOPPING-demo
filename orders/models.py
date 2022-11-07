@@ -1,4 +1,5 @@
 from django.db import models
+from django_countries.fields import CountryField
 
 from users.models import User
 from products.models import Product
@@ -16,6 +17,7 @@ class CartItem(models.Model):
         on_delete=models.CASCADE
     )
     amount = models.PositiveIntegerField()
+    is_paid = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.product.name} added to cart by {self.user}"
@@ -36,16 +38,16 @@ class CartItem(models.Model):
 
 
 class Address(models.Model):
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         User,
+        related_name='address',
         on_delete=models.CASCADE
     )
     street_address = models.CharField(max_length=100)
     apartment_address = models.CharField(max_length=100)
-    # country = CountryField(multiple=False)
+    country = CountryField(multiple=False)
     zip = models.CharField(max_length=100)
     # address_type = models.CharField(max_length=1, choices=ADDRESS_CHOICES)
-    default = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user
