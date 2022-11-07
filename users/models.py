@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password
+from phonenumber_field.modelfields import PhoneNumberField
 
-
-from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 
@@ -59,20 +59,20 @@ class User(AbstractUser):
     middle_name = models.CharField(_("middle_name"), max_length=256, blank=True)
     username = models.CharField(_("username"), max_length=150, blank=True)
     gender = models.CharField(max_length=15, choices=GENDER_TYPES, default=GENDER_TYPES[2][0])
-    birth_date = models.DateField(null=True)
-    phone_number = models.CharField(_("phone number"),
+    birth_date = models.DateField(null=True, blank=True)
+    phone_number = PhoneNumberField(_("phone number"),
                                     max_length=20,
                                     unique=True,
-                                    help_text=_(
-                                        "Required. 20 characters or fewer. Digits and + only."
-                                    ),
+                                    # help_text=_(
+                                    #     "Required. 20 characters or fewer. Digits and + only."
+                                    # ),
 
                                     error_messages={
                                         "unique": _("A user with that phone number already exists."),
                                     },
                                     )
     city = models.CharField(max_length=32, blank=True)
-    image = models.ImageField(upload_to='user', null=True)
+    image = models.ImageField(upload_to='user', null=True, blank=True)
     objects = CustomUserManager()
     created_at = models.DateTimeField("date created", auto_now_add=True, null=True)
     updated_at = models.DateTimeField("date updated", auto_now=True)
@@ -82,3 +82,7 @@ class User(AbstractUser):
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "phone_number"
     REQUIRED_FIELDS = []
+
+    def __str__(self):
+        return str(self.phone_number)
+

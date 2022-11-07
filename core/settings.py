@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     # installed apps
     'rest_framework',
     'django_filters',
+    'phonenumber_field',
+    'django_countries',
 
     # local apps
     'users',
@@ -111,6 +113,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = "users.User"
+
+PHONENUMBER_DEFAULT_FORMAT = "E164"
+
+PHONENUMBER_DEFAULT_REGION = "US"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
