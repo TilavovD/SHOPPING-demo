@@ -1,4 +1,5 @@
 from django.db import models
+from django_countries.fields import CountryField
 
 from users.models import User
 from products.models import Product
@@ -16,6 +17,7 @@ class CartItem(models.Model):
         on_delete=models.CASCADE
     )
     amount = models.PositiveIntegerField()
+    is_paid = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.product.name} added to cart by {self.user}"
@@ -33,3 +35,22 @@ class CartItem(models.Model):
         if self.product.discount_percent > 0:
             return self.get_total_discount_item_price()
         return self.get_total_item_price()
+
+
+class Address(models.Model):
+    user = models.OneToOneField(
+        User,
+        related_name='address',
+        on_delete=models.CASCADE
+    )
+    street_address = models.CharField(max_length=100)
+    apartment_address = models.CharField(max_length=100)
+    country = CountryField(multiple=False)
+    zip = models.CharField(max_length=100)
+    # address_type = models.CharField(max_length=1, choices=ADDRESS_CHOICES)
+
+    def __str__(self):
+        return self.user
+
+    class Meta:
+        verbose_name_plural = 'Addresses'
