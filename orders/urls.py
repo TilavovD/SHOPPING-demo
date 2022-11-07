@@ -5,5 +5,5 @@ from .views import CartListAPIView
 app_name = 'orders'
 
 urlpatterns = [
-    path('', CartListAPIView.as_view(), name='list')
+    path('cart/', CartListAPIView.as_view(), name='cart-list'),
 ]
