@@ -44,7 +44,7 @@ class Product(models.Model):
         return f"{self.name} | ${self.price}"
 
     def get_price_after_discount(self):
-        return self.price * (100 - self.discount_percent) / 100
+        return self.price * (100-self.discount_percent) / 100
 
 
 class FavouriteProduct(models.Model):
