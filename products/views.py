@@ -9,6 +9,7 @@ from .serializers import (
     ProductSerializer,
     FavouriteProductSerializer,
     AddFavouriteProductSerializer,
+    CategoryDetailSerializer,
 )
 
 
@@ -16,6 +17,18 @@ from .serializers import (
 class MainCategoryListAPIView(ListAPIView):
     queryset = Category.objects.filter(parent_category__isnull=True)
     serializer_class = MainCategorySerializer
+
+
+class CategoryDetailAPIView(ListAPIView):
+    serializer_class = CategoryDetailSerializer
+
+    def get_queryset(self):
+        category = Category.objects.filter(id=self.kwargs['pk'])
+        if category:
+            if category.child_categories:
+                return Category.objects.filter(parent_category=category)
+            else:
+                return Product.objects.filter(category=category)
 
 
 class ProductListAPIView(ListAPIView):
