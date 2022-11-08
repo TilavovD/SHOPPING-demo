@@ -47,6 +47,9 @@ class AddressListAPIView(ListCreateAPIView):
     serializer_class = AddressSerializer
 
 
+# class OrderAPIVIew()
+
+
 class StripeConfigView(APIView):
     """
     StripeConfigView is the API of configs resource, and

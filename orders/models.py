@@ -6,6 +6,17 @@ from products.models import Product
 
 
 # Create your models here.
+DELIVERY_TYPES = (
+    ("courier", "courier"),
+    ("pickup", "pickup"),
+)
+
+PAYMENT_TYPE = (
+    ('stripe', 'stripe'),
+    ('cash', 'cash'),
+)
+
+
 class CartItem(models.Model):
     user = models.ForeignKey(
         User,
@@ -47,10 +58,34 @@ class Address(models.Model):
     apartment_address = models.CharField(max_length=100)
     country = CountryField(multiple=False)
     zip = models.CharField(max_length=100)
-    # address_type = models.CharField(max_length=1, choices=ADDRESS_CHOICES)
 
     def __str__(self):
-        return self.user
+        return f"{self.user} address"
 
     class Meta:
         verbose_name_plural = 'Addresses'
+
+
+class Order(models.Model):
+    delivery_method = models.CharField(
+        max_length=15,
+        choices=DELIVERY_TYPES,
+        default=DELIVERY_TYPES[0][0]
+    )
+    address = models.ForeignKey(
+        Address,
+        on_delete=models.CASCADE
+    )
+    date = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    first_name = models.CharField(max_length=50)
+    middle_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+
+    payment_method = models.CharField(
+        max_length=15,
+        choices=PAYMENT_TYPE,
+        default=PAYMENT_TYPE[1][0]
+    )
