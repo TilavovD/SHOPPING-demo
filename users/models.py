@@ -57,16 +57,11 @@ class CustomUserManager(UserManager):
 # Create your models here.
 class User(AbstractUser):
     middle_name = models.CharField(_("middle_name"), max_length=256, blank=True)
-    username = models.CharField(_("username"), max_length=150, blank=True)
     gender = models.CharField(max_length=15, choices=GENDER_TYPES, default=GENDER_TYPES[2][0])
     birth_date = models.DateField(null=True, blank=True)
     phone_number = PhoneNumberField(_("phone number"),
                                     max_length=20,
                                     unique=True,
-                                    # help_text=_(
-                                    #     "Required. 20 characters or fewer. Digits and + only."
-                                    # ),
-
                                     error_messages={
                                         "unique": _("A user with that phone number already exists."),
                                     },
@@ -79,7 +74,7 @@ class User(AbstractUser):
 
     is_agree = models.BooleanField(default=False)
 
-    EMAIL_FIELD = "email"
+    username = None
     USERNAME_FIELD = "phone_number"
     REQUIRED_FIELDS = []
 

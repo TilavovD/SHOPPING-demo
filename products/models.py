@@ -25,6 +25,7 @@ class Category(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=128)
+    sub_name = models.CharField(max_length=128)
     image = models.ImageField(upload_to='products')
     description = models.TextField()
     category = models.ForeignKey(
@@ -36,6 +37,10 @@ class Product(models.Model):
     price = models.PositiveIntegerField()
     discount_percent = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(default=timezone.now)
+    volume = models.PositiveIntegerField()
+
+    artikul_number = models.PositiveBigIntegerField()
+    quantity = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ['name']
@@ -44,7 +49,7 @@ class Product(models.Model):
         return f"{self.name} | ${self.price}"
 
     def get_price_after_discount(self):
-        return self.price * (100-self.discount_percent) / 100
+        return self.price * (100 - self.discount_percent) / 100
 
 
 class FavouriteProduct(models.Model):
