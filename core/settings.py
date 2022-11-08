@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django_filters',
     'phonenumber_field',
     'django_countries',
+    'stripe',
 
     # local apps
     'users',
