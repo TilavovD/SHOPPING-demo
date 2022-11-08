@@ -5,7 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Category, Product, FavouriteProduct
 from .serializers import (
-    CategorySerializer,
+    MainCategorySerializer,
     ProductSerializer,
     FavouriteProductSerializer,
     AddFavouriteProductSerializer,
@@ -13,9 +13,9 @@ from .serializers import (
 
 
 # Create your views here.
-class CategoryListAPIView(ListAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+class MainCategoryListAPIView(ListAPIView):
+    queryset = Category.objects.filter(parent_category__isnull=True)
+    serializer_class = MainCategorySerializer
 
 
 class ProductListAPIView(ListAPIView):
