@@ -19,16 +19,13 @@ class MainCategoryListAPIView(ListAPIView):
     serializer_class = MainCategorySerializer
 
 
-class CategoryDetailAPIView(ListAPIView):
+class CategoryChildrenListAPIView(ListAPIView):
     serializer_class = CategoryDetailSerializer
 
     def get_queryset(self):
         category = Category.objects.filter(id=self.kwargs['pk'])
         if category:
-            if category.child_categories:
-                return Category.objects.filter(parent_category=category)
-            else:
-                return Product.objects.filter(category=category)
+            return Category.objects.filter(parent_category=category[0])
 
 
 class ProductListAPIView(ListAPIView):
