@@ -65,6 +65,10 @@ class CartItemAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = CartItemSerializer
 
     def perform_update(self, serializer):
+        if serializer.instance.user != self.request.user:
+            raise ValidationError({
+                'error': 'You cannot other people\'s cart',
+            })
         serializer.save(user=self.request.user)
 
 
@@ -135,10 +139,13 @@ class StripeSessionView(APIView):
     def get(self, request):
         stripe.api_key = settings.STRIPE_SECRET_KEY
 
+        user = request.user
+        # order
+
         pay_data = {
             'price_data': {
                 "currency": "usd",
-                "unit_amount": 1000,
+                "unit_amount": 2000,
                 "product_data": {
                     "name": "product_name",
                     "images": [],

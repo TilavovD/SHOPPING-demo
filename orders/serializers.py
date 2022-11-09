@@ -10,7 +10,7 @@ class AddCartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = '__all__'
-        read_only_fields = ('user', )
+        read_only_fields = ('user', 'order', )
 
 
 # List of Products that particular user added his cart to buy
@@ -46,7 +46,7 @@ class CartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = '__all__'
-        read_only_fields = ('user', )
+        read_only_fields = ('user', 'order', )
 
 
 # Add, detail, update, delete address of particular user
@@ -60,14 +60,14 @@ class AddressSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
 
-    items = serializers.SerializerMethodField('items_func', read_only=True)
+    products = serializers.SerializerMethodField('items_func', read_only=True)
 
     def items_func(self, obj):
         queryset = CartItem.objects.filter(order=obj)
-        ser = CartItemSerializer(queryset, many=True)
-        return ser.data
+        serializer = CartItemSerializer(queryset, many=True)
+        return serializer.data
 
     class Meta:
         model = Order
         fields = '__all__'
-        read_only_fields = ('user', 'is_paid', )
+        read_only_fields = ('user', 'is_paid', 'total_money', )

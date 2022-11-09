@@ -100,6 +100,7 @@ class Order(models.Model):
     )
 
     is_paid = models.BooleanField(default=False)
+    total_money = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"order {self.user}"

@@ -25,10 +25,10 @@ urlpatterns = [
     path('addressess/', AddressListAPIView.as_view(), name='address-list'),
     path('address/detail/', AddressDetailAPIView.as_view(), name='address-detail'),
 
-    path('payment/', StripeSessionView.as_view(), name='stripe-session'),
-    path('payment/stripe-config', StripeConfigView.as_view(), name='stripe-config'),
-
     path('create-order/', CreateOrderAPIVIew.as_view(), name='create-order'),
     path('order-history/', OrderHistoryListAPIVIew.as_view(), name='order-history'),
+
+    path('payment/', StripeSessionView.as_view(), name='stripe-session'),
+    path('payment/stripe-config', StripeConfigView.as_view(), name='stripe-config'),
 
 ]
