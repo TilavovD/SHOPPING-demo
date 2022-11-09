@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'phonenumber_field',
+    'django_countries',
     'stripe',
+    'rest_framework.authtoken',
 
     # local apps
     'users',
@@ -153,3 +155,10 @@ STRIPE_PUBLISHABLE_KEY = 'pk_test_51LzPsRCGhinPHEzyRaEdOJeDqmAWr7dMIZXa6ooCvDiAe
 c7q4ZRopN10UOT82KzfbQeChPngvutmVB1GllNRMi7Q00NIj2WzAV'
 STRIPE_SECRET_KEY = 'sk_test_51LzPsRCGhinPHEzyjDC42vWZlwMF2RgPHpJjhaTDLHCqlXCmmL\
 3ZoFqelcLq2vhUD4TLJaZkp48sBYYt7QDQ6DNr004XGmzKDt'
+#
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
