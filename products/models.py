@@ -39,7 +39,7 @@ class Product(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     volume = models.PositiveIntegerField()
 
-    artikul_number = models.PositiveBigIntegerField()
+    artikul_number = models.CharField(max_length=20)
     quantity = models.PositiveIntegerField(default=0)
 
     class Meta:
