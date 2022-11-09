@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'phonenumber_field',
-    'django_countries',
     'stripe',
 
     # local apps

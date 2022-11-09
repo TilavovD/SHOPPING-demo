@@ -1,5 +1,4 @@
 from django.db import models
-from django_countries.fields import CountryField
 
 from users.models import User
 from products.models import Product
@@ -27,8 +26,13 @@ class CartItem(models.Model):
         Product,
         on_delete=models.CASCADE
     )
-    amount = models.PositiveIntegerField()
-    is_paid = models.BooleanField(default=False)
+    amount = models.PositiveIntegerField(default=1)
+    order = models.ForeignKey(
+        'Order',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
 
     def __str__(self):
         return f"{self.product.name} added to cart by {self.user}"
@@ -54,10 +58,9 @@ class Address(models.Model):
         related_name='address',
         on_delete=models.CASCADE
     )
+    city_address = models.CharField(max_length=100)
     street_address = models.CharField(max_length=100)
     apartment_address = models.CharField(max_length=100)
-    country = CountryField(multiple=False)
-    zip = models.CharField(max_length=100)
 
     def __str__(self):
         return f"{self.user} address"
@@ -67,15 +70,21 @@ class Address(models.Model):
 
 
 class Order(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    city_address = models.CharField(max_length=100)
+    street_address = models.CharField(max_length=100)
+    apartment_address = models.CharField(max_length=100)
+
     delivery_method = models.CharField(
         max_length=15,
         choices=DELIVERY_TYPES,
         default=DELIVERY_TYPES[0][0]
     )
-    address = models.ForeignKey(
-        Address,
-        on_delete=models.CASCADE
-    )
+
     date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
@@ -89,3 +98,8 @@ class Order(models.Model):
         choices=PAYMENT_TYPE,
         default=PAYMENT_TYPE[1][0]
     )
+
+    is_paid = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"order {self.user}"
