@@ -1,3 +1,4 @@
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, DestroyAPIView
 
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -26,6 +27,15 @@ class CategoryChildrenListAPIView(ListAPIView):
         category = Category.objects.filter(id=self.kwargs['pk'])
         if category:
             return Category.objects.filter(parent_category=category[0])
+
+
+class CategoryProductListAPIView(ListAPIView):
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        category = Category.objects.filter(id=self.kwargs['pk'])
+        if category:
+            return Product.objects.filter(category=category[0])
 
 
 class ProductListAPIView(ListAPIView):
@@ -81,3 +91,10 @@ class AddFavouriteProductAPIView(CreateAPIView):
 class DeleteFavouriteProductAPIView(DestroyAPIView):
     queryset = FavouriteProduct.objects.all()
     serializer_class = AddFavouriteProductSerializer
+
+    def perform_destroy(self, instance):
+        if instance.user != self.request.user:
+            raise ValidationError({
+                'error': 'You can not change other people\'s wishlist.',
+            })
+        instance.delete()

@@ -77,7 +77,9 @@ class AddressListAPIView(ListCreateAPIView):
     def perform_create(self, serializer):
         queryset = Address.objects.filter(user=self.request.user)
         if queryset.exists():
-            raise ValidationError('You have already added address. You can edit it, but not create new one')
+            raise ValidationError({
+                'error': 'You have already added address. You can edit it, but not create new one',
+            })
         serializer.save(user=self.request.user)
 
 
@@ -91,7 +93,9 @@ class AddressDetailAPIView(RetrieveUpdateDestroyAPIView):
 
     def perform_destroy(self, instance):
         if instance.user != self.request.user:
-            raise ValidationError('You can not delete other people\'s address information')
+            raise ValidationError({
+                'error': 'You can not delete other people\'s address information',
+            })
         instance.delete()
 
 
@@ -113,21 +117,6 @@ class OrderHistoryListAPIVIew(ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return Order.objects.filter(user=user)
-
-    # def list(self, request):
-    #     queryset = self.get_queryset()
-    #     serializer = OrderSerializer(queryset, many=True)
-    #
-    #     result_data = serializer.data
-    #
-    #     for  in result_data:
-    #
-    #
-    #     result_data = {
-    #         'final_price': final_price,
-    #         'total_amount_saved': total_amount_saved,
-    #         'items_data': serializer.data
-    #     }
 
 
 class StripeConfigView(APIView):
