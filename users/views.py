@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from users.models import User
 from .serializers import UserDetailSerializer
-import vonage
+from .helpers import send_secret_code
 
 
 # Create your views here.
@@ -24,9 +24,7 @@ class UserCreateView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         response = self.create(request, *args, **kwargs)
         user = User.objects.get(phone_number=request.data['phone_number'])
-        print(request.user)
-        user.secret_key = 11111
-        user.save()
+        send_secret_code(user)
         return response
 
 
