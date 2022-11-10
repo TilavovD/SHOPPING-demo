@@ -71,6 +71,7 @@ class User(AbstractUser):
     objects = CustomUserManager()
     created_at = models.DateTimeField("date created", auto_now_add=True, null=True)
     updated_at = models.DateTimeField("date updated", auto_now=True)
+    secret_key = models.CharField(_("phone verification key"), max_length=6)
 
     is_agree = models.BooleanField(default=False)
 
@@ -80,6 +81,3 @@ class User(AbstractUser):
 
     def __str__(self):
         return str(self.phone_number)
-
-
-
