@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'stripe',
     'rest_framework.authtoken',
+    'ckeditor',
+    'ckeditor_uploader',
 
     # local apps
     'users',
@@ -135,6 +137,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+STATIC_ROOT = BASE_DIR / 'static-files'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -144,9 +151,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Media Files
 MEDIA_ROOT = BASE_DIR / 'media-files'
-
 MEDIA_URL = '/media/'
 
+# Stripe settings
 PAYMENT_SUCCESS_URL = 'http://127.0.0.1:8000/api/v1/orders/payment/success/'
 PAYMENT_CANCEL_URL = 'http://127.0.0.1:8000/api/v1/orders/payment/cancel/'
 
@@ -155,10 +162,37 @@ c7q4ZRopN10UOT82KzfbQeChPngvutmVB1GllNRMi7Q00NIj2WzAV'
 STRIPE_SECRET_KEY = 'sk_test_51LzPsRCGhinPHEzyjDC42vWZlwMF2RgPHpJjhaTDLHCqlXCmmL\
 3ZoFqelcLq2vhUD4TLJaZkp48sBYYt7QDQ6DNr004XGmzKDt'
 
+
 # Rest Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ]
+}
+
+# CKEditor settings
+CKEDITOR_UPLOAD_PATH = "uploads/"
+
+# CKEDITOR_CONFIGS = {
+#     'default': {
+#         'toolbar': 'full',
+#         'height': 300,
+#         'width': 300,
+#     },
+# }
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline'],
+            ['FontSize', 'Styles', 'TextColor', 'BGColor', 'Blockquote'],
+            ['NumberedList', 'BulletedList', '-', 'Outdent',
+             'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+            ['Link', 'Unlink'],
+            ['RemoveFormat', 'Source'],
+            ['Document', 'Image', 'Table']
+        ]
+    }
 }

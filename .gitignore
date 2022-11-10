@@ -312,3 +312,5 @@ ehthumbs_vista.db
 # Folder config file
 media-files/products
 media-files/user
+media-files/
+static-files/

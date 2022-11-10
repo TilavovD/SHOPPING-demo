@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from ckeditor_uploader.fields import RichTextUploadingField
 
 from users.models import User
 
@@ -27,7 +28,7 @@ class Product(models.Model):
     name = models.CharField(max_length=128)
     sub_name = models.CharField(max_length=128)
     image = models.ImageField(upload_to='products')
-    description = models.TextField()
+    description = RichTextUploadingField()
     category = models.ForeignKey(
         Category,
         related_name='products',
