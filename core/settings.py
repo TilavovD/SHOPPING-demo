@@ -147,14 +147,15 @@ MEDIA_ROOT = BASE_DIR / 'media-files'
 
 MEDIA_URL = '/media/'
 
-PAYMENT_SUCCESS_URL = 'http://127.0.0.1:8000/api/v1/orders//payment/success/'
-PAYMENT_CANCEL_URL = 'http://127.0.0.1:8000/api/v1/orders//payment/cancel/'
+PAYMENT_SUCCESS_URL = 'http://127.0.0.1:8000/api/v1/orders/payment/success/'
+PAYMENT_CANCEL_URL = 'http://127.0.0.1:8000/api/v1/orders/payment/cancel/'
 
 STRIPE_PUBLISHABLE_KEY = 'pk_test_51LzPsRCGhinPHEzyRaEdOJeDqmAWr7dMIZXa6ooCvDiAe\
 c7q4ZRopN10UOT82KzfbQeChPngvutmVB1GllNRMi7Q00NIj2WzAV'
 STRIPE_SECRET_KEY = 'sk_test_51LzPsRCGhinPHEzyjDC42vWZlwMF2RgPHpJjhaTDLHCqlXCmmL\
 3ZoFqelcLq2vhUD4TLJaZkp48sBYYt7QDQ6DNr004XGmzKDt'
-#
+
+# Rest Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
