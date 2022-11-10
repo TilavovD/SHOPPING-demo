@@ -18,6 +18,7 @@ def send_secret_code(user):
         print("Message Details: ", response)
         print("Message sent successfully.")
         user.secret_key = secret_key
+        user.is_verified = True
         user.save()
     else:
         print(f"Message failed with error: {response['messages'][0]['error-text']}")
