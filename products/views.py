@@ -25,8 +25,7 @@ class CategoryChildrenListAPIView(ListAPIView):
 
     def get_queryset(self):
         category = Category.objects.filter(id=self.kwargs['pk'])
-        if category:
-            return Category.objects.filter(parent_category=category[0])
+        return Category.objects.filter(parent_category=category[0])
 
 
 class CategoryProductListAPIView(ListAPIView):
