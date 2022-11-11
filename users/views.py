@@ -24,7 +24,9 @@ class UserCreateView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         response = self.create(request, *args, **kwargs)
         user = User.objects.get(phone_number=request.data['phone_number'])
-        send_secret_code(user)
+        secret_key = send_secret_code(request.data['phone_number'])
+        user.secret_key = secret_key
+        user.save()
         return response
 
 

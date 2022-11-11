@@ -1,24 +1,26 @@
-import vonage
+import requests
 from django.conf import settings
 import random
 
-def send_secret_code(user):
-    secret_key = random.randint(100000, 999999)
-    client = vonage.Client(key=settings.VONAGE_CLIENT_KEY, secret=settings.VONAGE_SECRET_KEY)
-    sms = vonage.Sms(client)
-    response = sms.send_message(
-        {
-            "from": "S-orca",
-            "to": f"{user.phone_number}",
-            "text": f"Secret key: {secret_key}",
-        }
-    )
 
-    if response["messages"][0]["status"] == "0":
-        print("Message Details: ", response)
-        print("Message sent successfully.")
-        user.secret_key = secret_key
-        user.is_verified = True
-        user.save()
-    else:
-        print(f"Message failed with error: {response['messages'][0]['error-text']}")
+def send_secret_code(phone_number):
+    secret_key = random.randint(100000, 999999)
+    url = "https://notify.eskiz.uz/api/message/sms/send"
+
+    payload = {'mobile_phone': f'{phone_number[1:]}',
+               'message': f'Maxfiy kod: {secret_key}',
+               'from': '4546',
+               'callback_url': 'http://0000.uz/test.php'}
+    files = [
+
+    ]
+    headers = {
+        'Authorization': f'Bearer {settings.ESKIZ_SMS_TOKEN}'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload, files=files)
+    print(response.text)
+    if response.status_code == 200:
+        return secret_key
+    print(response)
+    return None

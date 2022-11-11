@@ -71,7 +71,7 @@ class User(AbstractUser):
     objects = CustomUserManager()
     created_at = models.DateTimeField("date created", auto_now_add=True, null=True)
     updated_at = models.DateTimeField("date updated", auto_now=True)
-    secret_key = models.CharField(_("phone verification key"), max_length=6)
+    secret_key = models.CharField(_("phone verification key"), max_length=6, null=True)
     is_verified = models.BooleanField(default=False)
 
     is_agree = models.BooleanField(default=False)
