@@ -1,5 +1,9 @@
 import stripe
 from django.conf import settings
+from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
 from rest_framework.generics import (
@@ -19,6 +23,8 @@ from .serializers import (
     OrderSerializer,
     AddressSerializer,
 )
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 # Create your views here.
@@ -113,6 +119,20 @@ class CreateOrderAPIVIew(CreateAPIView):
         user = self.request.user
         serializer.save(user=user)
 
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        incomplete_orders = Order.objects.filter(user=user, is_paid=False)
+
+        if incomplete_orders.exists():
+            order = incomplete_orders[0]
+            serializer = OrderSerializer(instance=order, data=request.data)
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return self.create(request, *args, **kwargs)
+
 
 # List Orders History of particular user
 class OrderHistoryListAPIVIew(ListAPIView):
@@ -137,35 +157,92 @@ class StripeConfigView(APIView):
 
 class StripeSessionView(APIView):
     def get(self, request):
-        stripe.api_key = settings.STRIPE_SECRET_KEY
+        try:
+            user = request.user
+            orders = Order.objects.filter(user=user, is_paid=False)
 
-        user = request.user
-        # order
+            if orders.exists():
+                order = orders[0]
+                unit_amount = order.total_money
+            else:
+                return Response(
+                    {'error': 'You do not have any order yet.'},
+                    status=400
+                )
 
-        pay_data = {
-            'price_data': {
-                "currency": "usd",
-                "unit_amount": 2000,
-                "product_data": {
-                    "name": "product_name",
-                    "images": [],
+            pay_data = {
+                'price_data': {
+                    "currency": "usd",
+                    "unit_amount": unit_amount * 100,
+                    "product_data": {
+                        "name": "product_name",
+                        "images": [],
+                    }
+                },
+                "quantity": 1,
+            }
+
+            checkout_session = stripe.checkout.Session.create(
+                success_url=settings.PAYMENT_SUCCESS_URL,
+                cancel_url=settings.PAYMENT_CANCEL_URL,
+                mode='payment',
+                line_items=[
+                    pay_data,
+                ],
+                metadata={
+                    'order_id': order.id,
                 }
-            },
-            "quantity": 1,
-        }
+            )
 
-        checkout_session = stripe.checkout.Session.create(
-            success_url=settings.PAYMENT_SUCCESS_URL,
-            cancel_url=settings.PAYMENT_CANCEL_URL,
-            mode='payment',
-            line_items=[
-                pay_data,
-            ]
-        )
+            return redirect(checkout_session.url)
+            # return Response(
+            #     {
+            #         'sessionId': checkout_session['id'],
+            #         'session_url': checkout_session['url']
+            #      }
+            # )
+        except Exception as e:
+            return Response(
+                {
+                    'msg': 'something went wrong while creating stripe session',
+                    'error': str(e),
+                },
+                status=500
+            )
 
-        return Response(
-            {
-                'sessionId': checkout_session['id'],
-                'session_url': checkout_session['url']
-             }
+
+@csrf_exempt
+def stripe_webhook_view(request):
+
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    endpoint_secret = settings.STRIPE_WEBHOOK_KEY
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(
+            request.body, sig_header, endpoint_secret
         )
+    except ValueError as e:
+        # Invalid payload
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        return HttpResponse(status=400)
+
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        order_id = session['metadata']['order_id']
+
+        orders = Order.objects.filter(id=order_id)
+        if orders.exists():
+            order = orders[0]
+            order.is_paid = True
+            order.save()
+        else:
+            return Response(
+                {'error': 'No order found with this order id'},
+                status=400
+            )
+
+    # Passed signature verification
+    return HttpResponse(status=200)

@@ -34,6 +34,9 @@ class CartItem(models.Model):
         on_delete=models.CASCADE
     )
 
+    class Meta:
+        ordering = ['-id']
+
     def __str__(self):
         return f"{self.product.name} added to cart by {self.user}"
 
@@ -101,6 +104,10 @@ class Order(models.Model):
 
     is_paid = models.BooleanField(default=False)
     total_money = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
 
     def __str__(self):
-        return f"order {self.user}"
+        return f"{self.id} order {self.user}"

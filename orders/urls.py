@@ -13,7 +13,7 @@ from .views import (
 
     CreateOrderAPIVIew,
     OrderHistoryListAPIVIew,
-
+    stripe_webhook_view,
 )
 
 app_name = 'orders'
@@ -30,5 +30,7 @@ urlpatterns = [
 
     path('payment/', StripeSessionView.as_view(), name='stripe-session'),
     path('payment/stripe-config', StripeConfigView.as_view(), name='stripe-config'),
+    path('payment/success/', CartListAPIView.as_view(), name='cart-test'),
+    path('webhook/', stripe_webhook_view, name='webhook'),
 
 ]
