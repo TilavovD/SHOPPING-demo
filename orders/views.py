@@ -5,11 +5,11 @@ from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
+from rest_framework import permissions
 
 from rest_framework.generics import (
     ListAPIView,
     RetrieveUpdateDestroyAPIView,
-    ListCreateAPIView,
     CreateAPIView,
 )
 from rest_framework.views import APIView
@@ -34,6 +34,8 @@ class AddCartItemAPIView(CreateAPIView):
     queryset = CartItem.objects.all()
     serializer_class = AddCartItemSerializer
 
+    permission_classes = [permissions.IsAuthenticated]
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
@@ -41,6 +43,8 @@ class AddCartItemAPIView(CreateAPIView):
 # List of Products that particular user added his cart to buy
 class CartListAPIView(ListAPIView):
     serializer_class = CartItemListSerializer
+
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
@@ -70,6 +74,8 @@ class CartItemAPIView(RetrieveUpdateDestroyAPIView):
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
 
+    permission_classes = [permissions.IsAuthenticated]
+
     def perform_update(self, serializer):
         if serializer.instance.user != self.request.user:
             raise ValidationError({
@@ -80,9 +86,11 @@ class CartItemAPIView(RetrieveUpdateDestroyAPIView):
 
 #  ADDRESS VIEWS
 # Add address of particular user and List of all users' address
-class AddressListAPIView(ListCreateAPIView):
+class AddressListAPIView(CreateAPIView):
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
+
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         queryset = Address.objects.filter(user=self.request.user)
@@ -96,6 +104,8 @@ class AddressListAPIView(ListCreateAPIView):
 # Detail, update, delete Adress of particular user
 class AddressDetailAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = AddressSerializer
+
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
         user = self.request.user
@@ -114,6 +124,8 @@ class AddressDetailAPIView(RetrieveUpdateDestroyAPIView):
 class CreateOrderAPIVIew(CreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -138,6 +150,8 @@ class CreateOrderAPIVIew(CreateAPIView):
 class OrderHistoryListAPIVIew(ListAPIView):
     serializer_class = OrderSerializer
 
+    permission_classes = [permissions.IsAuthenticated]
+
     def get_queryset(self):
         user = self.request.user
         return Order.objects.filter(user=user)
@@ -148,6 +162,8 @@ class StripeConfigView(APIView):
     StripeConfigView is the API of configs resource, and
     responsible to handle the requests of /config/ endpoint.
     """
+    permission_classes = [permissions.IsAuthenticated]
+
     def get(self, request):
         config = {
             "publishable_key": settings.STRIPE_PUBLISHABLE_KEY
@@ -156,6 +172,8 @@ class StripeConfigView(APIView):
 
 
 class StripeSessionView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     def get(self, request):
         try:
             user = request.user
