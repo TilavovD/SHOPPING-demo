@@ -24,6 +24,9 @@ class UserCreateView(CreateAPIView):
     serializer_class = UserRegisterSerializer
 
     def post(self, request, *args, **kwargs):
+        user = User.objects.filter(phone_number=request.data['phone_number'], is_verified=False)
+        if user:
+            user[0].delete()
         response = self.create(request, *args, **kwargs)
         user = User.objects.get(phone_number=request.data['phone_number'])
         secret_key = send_secret_code(request.data['phone_number'])
