@@ -34,6 +34,7 @@ class UserCreateView(CreateAPIView):
 
 class CheckSecretCodeAPIView(APIView):
     serializer_class = SecretCodeSerializer
+
     def post(self, request, *args, **kwargs):
         try:
             user = User.objects.get(phone_number=request.data['phone_number'])
@@ -57,8 +58,8 @@ class CheckSecretCodeAPIView(APIView):
 
 
 class LoginView(APIView):
-    # This view should be accessible also for unauthenticated users.
     permission_classes = (permissions.AllowAny,)
+    serializer_class = LoginSerializer
 
     def post(self, request, format=None):
         serializer = LoginSerializer(data=self.request.data,
@@ -66,8 +67,6 @@ class LoginView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         login(request, user)
-        print(request.user)
-        # return Response(None, status=status.HTTP_202_ACCEPTED)
         return Response({
             "status": 200,
             "message": "User successfully logged in"
