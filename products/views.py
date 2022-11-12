@@ -1,5 +1,6 @@
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, DestroyAPIView
+from rest_framework import permissions
 
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -69,6 +70,8 @@ class ProductDetailAPIView(RetrieveAPIView):
 class FavouriteProductListAPIView(ListAPIView):
     serializer_class = FavouriteProductSerializer
 
+    permission_classes = [permissions.IsAuthenticated]
+
     def get_queryset(self):
         user = self.request.user
         return FavouriteProduct.objects.filter(user=user)
@@ -77,6 +80,8 @@ class FavouriteProductListAPIView(ListAPIView):
 class AddFavouriteProductAPIView(CreateAPIView):
     serializer_class = AddFavouriteProductSerializer
 
+    permission_classes = [permissions.IsAuthenticated]
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
@@ -84,6 +89,8 @@ class AddFavouriteProductAPIView(CreateAPIView):
 class DeleteFavouriteProductAPIView(DestroyAPIView):
     queryset = FavouriteProduct.objects.all()
     serializer_class = AddFavouriteProductSerializer
+
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_destroy(self, instance):
         if instance.user != self.request.user:
