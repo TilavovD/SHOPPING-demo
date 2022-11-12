@@ -3,7 +3,7 @@ from rest_framework.generics import RetrieveAPIView, CreateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from users.models import User
-from .serializers import UserDetailSerializer, LoginSerializer, UserRegisterSerializer
+from .serializers import UserDetailSerializer, LoginSerializer, UserRegisterSerializer, SecretCodeSerializer
 from .helpers import send_secret_code
 from rest_framework import permissions, status
 
@@ -33,6 +33,7 @@ class UserCreateView(CreateAPIView):
 
 
 class CheckSecretCodeAPIView(APIView):
+    serializer_class = SecretCodeSerializer
     def post(self, request, *args, **kwargs):
         try:
             user = User.objects.get(phone_number=request.data['phone_number'])

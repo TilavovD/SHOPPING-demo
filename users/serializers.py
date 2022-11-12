@@ -14,13 +14,20 @@ class UserDetailSerializer(ModelSerializer):
 class UserRegisterSerializer(ModelSerializer):
     password = serializers.CharField(
         min_length=6, write_only=True, required=True)
+
     class Meta:
         model = User
         fields = (
-        "first_name", "last_name", "password", "phone_number", "gender", "birth_date", "city", "image", "is_agree")
+            "first_name", "last_name", "password", "phone_number", "gender", "birth_date", "city", "image", "is_agree")
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+
+
+class SecretCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("phone_number", "secret_key")
 
 
 class LoginSerializer(serializers.Serializer):
