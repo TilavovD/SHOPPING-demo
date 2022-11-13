@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 
+from environs import Env
+
+# environs
+env = Env()
+env.read_env()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,12 +26,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure--x^zxn$xwyy(p+nb76i1dkq+o2qd9)+8yr(gt(g^48joc5n!0v'
+SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG")  # DEBUG holati
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -114,7 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-CSRF_TRUSTED_ORIGINS=['http://127.0.0.1:8000']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000']
 AUTH_USER_MODEL = "users.User"
 
 PHONENUMBER_DEFAULT_FORMAT = "E164"
@@ -153,17 +159,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_ROOT = BASE_DIR / 'media-files'
 MEDIA_URL = '/media/'
 
+BASE_URL = env.str("BASE_URL")
 # Stripe settings
-PAYMENT_SUCCESS_URL = 'http://127.0.0.1:8000/api/v1/orders/payment/success/'
-PAYMENT_CANCEL_URL = 'http://127.0.0.1:8000/api/v1/orders/payment/cancel/'
+PAYMENT_SUCCESS_URL = BASE_URL + 'api/v1/orders/payment/success/'
+PAYMENT_CANCEL_URL = BASE_URL + 'api/v1/orders/payment/cancel/'
 
-STRIPE_PUBLISHABLE_KEY = 'pk_test_51LzPsRCGhinPHEzyRaEdOJeDqmAWr7dMIZXa6ooCvDiAe\
-c7q4ZRopN10UOT82KzfbQeChPngvutmVB1GllNRMi7Q00NIj2WzAV'
-STRIPE_SECRET_KEY = 'sk_test_51LzPsRCGhinPHEzyjDC42vWZlwMF2RgPHpJjhaTDLHCqlXCmmL\
-3ZoFqelcLq2vhUD4TLJaZkp48sBYYt7QDQ6DNr004XGmzKDt'
-STRIPE_WEBHOOK_KEY = 'whsec_530052473105e6d2b01c2cba4cfa11fbdb593edc38780ec21c921524a553f4e0'
+STRIPE_PUBLISHABLE_KEY = env.str("STRIPE_PUBLISHABLE_KEY")
+STRIPE_SECRET_KEY = env.str("STRIPE_SECRET_KEY")
+STRIPE_WEBHOOK_KEY = env.str("STRIPE_WEBHOOK_KEY")
 
-ESKIZ_SMS_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjUsInJvbGUiOiJ1c2VyIiwiZGF0YSI6eyJpZCI6NSwibmFtZSI6Ilx1MDQyN1x1MDQxZiBCZXN0IEludGVybmV0IFNvbHV0aW9uIiwiZW1haWwiOiJ0ZXN0QGVza2l6LnV6Iiwicm9sZSI6InVzZXIiLCJhcGlfdG9rZW4iOiJleUowZVhBaU9pSktWMVFpTENKaGJHY2lPaUpJVXpJMU5pSjkuZXlKemRXSWlPalVzSW5KdmJHVWlPaUoxYzJWeUlpd2laR0YwWVNJNmV5SnBaQ0k2TlN3aWJtRnRaU0k2SWx4MU1EUXlOMXgxTURReFppQkNaWE4wSUVsdWRHVnlibVYwSUZOdmJIVjBhVzl1SWl3aVpXMWhhV3dpT2lKMFpYTjBRR1Z6YTJsNkxuVjZJaXdpY205c1pTSTZJblZ6WlhJaUxDSmhjR2xmZEc5clpXNGlPaUpsZVVvd1pWaEJhVTlwU2t0V01WRnBURU5LYUdKSFkybFBhVXBKVlgiLCJzdGF0dXMiOiJhY3RpdmUiLCJzbXNfYXBpX2xvZ2luIjoiZXNraXoyIiwic21zX2FwaV9wYXNzd29yZCI6ImUkJGsheiIsInV6X3ByaWNlIjo1MCwidWNlbGxfcHJpY2UiOjUwLCJiYWxhbmNlIjozNDg5LCJpc192aXAiOjAsImhvc3QiOiJzZXJ2ZXIxIiwiY3JlYXRlZF9hdCI6bnVsbCwidXBkYXRlZF9hdCI6IjIwMjItMTEtMTFUMTA6MjM6NDIuMDAwMDAwWiJ9LCJpYXQiOjE2NjgxNjIyNzEsImV4cCI6MTY3MDc1NDI3MX0.u-U9PiRlPSOjMQD-ocdG6yrVr9FDLMxeicQh9OugNkY"
+ESKIZ_SMS_TOKEN = env.str("ESKIZ_SMS_TOKEN")
+
 # Rest Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
