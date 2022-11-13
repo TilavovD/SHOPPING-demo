@@ -1,5 +1,6 @@
 import stripe
 from django.conf import settings
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -10,6 +11,7 @@ from rest_framework import permissions
 from rest_framework.generics import (
     ListAPIView,
     RetrieveUpdateDestroyAPIView,
+    RetrieveAPIView,
     CreateAPIView,
 )
 from rest_framework.views import APIView
@@ -48,7 +50,7 @@ class CartListAPIView(ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return CartItem.objects.filter(user=user, order__isnull=True)
+        return CartItem.objects.filter(Q(user=user), Q(order__isnull=True) | Q(order__is_paid=False))
 
     def list(self, request):
         queryset = self.get_queryset()
@@ -86,7 +88,7 @@ class CartItemAPIView(RetrieveUpdateDestroyAPIView):
 
 #  ADDRESS VIEWS
 # Add address of particular user and List of all users' address
-class AddressListAPIView(CreateAPIView):
+class AddressCreateAPIView(CreateAPIView):
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
 
@@ -133,7 +135,7 @@ class CreateOrderAPIVIew(CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         user = request.user
-        incomplete_orders = Order.objects.filter(user=user, is_paid=False)
+        incomplete_orders = Order.objects.filter(user=user, is_paid=False, payment_method='stripe')
 
         if incomplete_orders.exists():
             order = incomplete_orders[0]
@@ -157,6 +159,36 @@ class OrderHistoryListAPIVIew(ListAPIView):
         return Order.objects.filter(user=user)
 
 
+class OrderDetailAPIView(RetrieveAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    def get_object(self):
+        user = self.request.user
+        order_id = self.kwargs.get('pk')
+        orders = Order.objects.filter(user=user, id=order_id)
+        if orders.exists():
+            return orders[0]
+
+
+class PaymentSuccessAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        return Response({
+            'msg': 'Your payment finished successfully',
+        })
+
+
+class PaymentCancelAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        return Response({
+            'msg': 'Your payment cancelled',
+        })
+
+
 class StripeConfigView(APIView):
     """
     StripeConfigView is the API of configs resource, and
@@ -177,14 +209,14 @@ class StripeSessionView(APIView):
     def get(self, request):
         try:
             user = request.user
-            orders = Order.objects.filter(user=user, is_paid=False)
+            orders = Order.objects.filter(user=user, is_paid=False, payment_method='stripe')
 
             if orders.exists():
                 order = orders[0]
                 unit_amount = order.total_money
             else:
                 return Response(
-                    {'error': 'You do not have any order yet.'},
+                    {'msg': 'You do not have any order via stripe'},
                     status=400
                 )
 
@@ -219,6 +251,7 @@ class StripeSessionView(APIView):
             #         'session_url': checkout_session['url']
             #      }
             # )
+
         except Exception as e:
             return Response(
                 {
@@ -255,6 +288,7 @@ def stripe_webhook_view(request):
         if orders.exists():
             order = orders[0]
             order.is_paid = True
+            print('\n\n', order.is_paid, '\n\n')
             order.save()
         else:
             return Response(

@@ -5,14 +5,17 @@ from .views import (
     AddCartItemAPIView,
     CartItemAPIView,
 
-    AddressListAPIView,
+    AddressCreateAPIView,
     AddressDetailAPIView,
-
-    StripeConfigView,
-    StripeSessionView,
 
     CreateOrderAPIVIew,
     OrderHistoryListAPIVIew,
+    OrderDetailAPIView,
+
+    StripeConfigView,
+    StripeSessionView,
+    PaymentSuccessAPIView,
+    PaymentCancelAPIView,
     stripe_webhook_view,
 )
 
@@ -22,15 +25,17 @@ urlpatterns = [
     path('cart/', CartListAPIView.as_view(), name='cart-list'),
     path('cart/add/', AddCartItemAPIView.as_view(), name='cart-add'),
     path('cart/<int:pk>/', CartItemAPIView.as_view(), name='cart-item'),
-    path('addressess/', AddressListAPIView.as_view(), name='address-list'),
+    path('address/create', AddressCreateAPIView.as_view(), name='address-create'),
     path('address/detail/', AddressDetailAPIView.as_view(), name='address-detail'),
 
     path('create-order/', CreateOrderAPIVIew.as_view(), name='create-order'),
     path('order-history/', OrderHistoryListAPIVIew.as_view(), name='order-history'),
+    path('order-history/<int:pk>/', OrderDetailAPIView.as_view(), name='order-detail'),
 
-    path('payment/', StripeSessionView.as_view(), name='stripe-session'),
     path('payment/stripe-config', StripeConfigView.as_view(), name='stripe-config'),
-    path('payment/success/', CartListAPIView.as_view(), name='cart-test'),
+    path('payment/', StripeSessionView.as_view(), name='stripe-session'),
+    path('payment/success/', PaymentSuccessAPIView.as_view(), name='payment-success'),
+    path('payment/cancel/', PaymentCancelAPIView.as_view(), name='payment-cancel'),
     path('webhook/', stripe_webhook_view, name='webhook'),
 
 ]
