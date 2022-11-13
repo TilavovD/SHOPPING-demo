@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework import permissions
@@ -50,7 +51,14 @@ class CartListAPIView(ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return CartItem.objects.filter(Q(user=user), Q(order__isnull=True) | Q(order__is_paid=False))
+        return CartItem.objects.filter(
+            Q(user=user),
+            Q(order__isnull=True) |
+            Q(
+                Q(order__is_paid=False) &
+                Q(order__payment_method='stripe')
+            )
+        )
 
     def list(self, request):
         queryset = self.get_queryset()
@@ -153,6 +161,8 @@ class OrderHistoryListAPIVIew(ListAPIView):
     serializer_class = OrderSerializer
 
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['payment_method', 'is_paid']
 
     def get_queryset(self):
         user = self.request.user
