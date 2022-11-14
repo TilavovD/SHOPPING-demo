@@ -5,24 +5,22 @@ from rest_framework.views import APIView
 from users.models import User
 from .serializers import UserDetailSerializer, LoginSerializer, UserRegisterSerializer, SecretCodeSerializer
 from .helpers import send_secret_code_via_vonage
-from rest_framework import permissions, status
+from rest_framework import permissions
 
 
 # Create your views here.
 
 class UserDetailView(RetrieveAPIView):
-    queryset = User.objects.all()
     serializer_class = UserDetailSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = (permissions.IsAuthenticated, )
 
     def get_object(self):
         return self.request.user
 
 
 class UserCreateView(CreateAPIView):
-    queryset = User.objects.all()
     serializer_class = UserRegisterSerializer
-
+    permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
         user = User.objects.filter(phone_number=request.data['phone_number'], is_verified=False)
@@ -38,6 +36,7 @@ class UserCreateView(CreateAPIView):
 
 class CheckSecretCodeAPIView(APIView):
     serializer_class = SecretCodeSerializer
+    permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
         try:
