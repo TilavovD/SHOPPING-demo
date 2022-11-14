@@ -13,15 +13,16 @@ from rest_framework import permissions, status
 class UserDetailView(RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserDetailSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self, **kwargs):
-        print(self.kwargs)
-        return self.queryset.filter(pk=self.kwargs['pk'])
+    def get_object(self):
+        return self.request.user
 
 
 class UserCreateView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegisterSerializer
+
 
     def post(self, request, *args, **kwargs):
         user = User.objects.filter(phone_number=request.data['phone_number'], is_verified=False)
