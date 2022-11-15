@@ -236,10 +236,10 @@ class StripeSessionView(APIView):
                     "unit_amount": unit_amount * 100,
                     "product_data": {
                         "name": "product_name",
-                        "images": [],
+                        "images": ["https://avatars.mds.yandex.net/i?id=2cdc18cff9f738ac3e371af9a2b9d125-5879172-images-thumbs&n=13"],
                     }
                 },
-                "quantity": 1,
+                "quantity": 2,
             }
 
             checkout_session = stripe.checkout.Session.create(
