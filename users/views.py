@@ -4,24 +4,23 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from users.models import User
 from .serializers import UserDetailSerializer, LoginSerializer, UserRegisterSerializer, SecretCodeSerializer
-from .helpers import send_secret_code
-from rest_framework import permissions, status
+from .helpers import send_secret_code_via_vonage
+from rest_framework import permissions
 
 
 # Create your views here.
 
 class UserDetailView(RetrieveAPIView):
-    queryset = User.objects.filter(is_superuser=True)
     serializer_class = UserDetailSerializer
+    permission_classes = (permissions.IsAuthenticated, )
 
-    def get_queryset(self, **kwargs):
-        print(self.kwargs)
-        return self.queryset.filter(pk=self.kwargs['pk'])
+    def get_object(self):
+        return self.request.user
 
 
 class UserCreateView(CreateAPIView):
-    queryset = User.objects.all()
     serializer_class = UserRegisterSerializer
+    permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
         user = User.objects.filter(phone_number=request.data['phone_number'], is_verified=False)
@@ -29,7 +28,7 @@ class UserCreateView(CreateAPIView):
             user[0].delete()
         response = self.create(request, *args, **kwargs)
         user = User.objects.get(phone_number=request.data['phone_number'])
-        secret_key = send_secret_code(request.data['phone_number'])
+        secret_key = send_secret_code_via_vonage(request.data['phone_number'])
         user.secret_key = secret_key
         user.save()
         return response
@@ -37,6 +36,7 @@ class UserCreateView(CreateAPIView):
 
 class CheckSecretCodeAPIView(APIView):
     serializer_class = SecretCodeSerializer
+    permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
         try:
@@ -70,6 +70,7 @@ class LoginView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         login(request, user)
+        print(user.id)
         return Response({
             "status": 200,
             "message": "User successfully logged in"
