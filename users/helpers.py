@@ -19,8 +19,6 @@ def send_secret_code(phone_number):
     }
 
     response = requests.request("POST", url, headers=headers, data=payload, files=files)
-    print(response.text)
     if response.status_code == 200:
         return secret_key
-    print(response)
     return None
