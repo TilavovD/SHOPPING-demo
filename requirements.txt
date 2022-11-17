@@ -11,3 +11,4 @@ stripe==4.2.0
 environs==9.5.0
 vonage==3.1.0
 drf-yasg==1.21.4
+whitenoise==6.2.0
