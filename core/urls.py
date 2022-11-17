@@ -41,7 +41,6 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('ckeditor/', include('ckeditor_uploader.urls')),
 
     path("api/v1/user/", include("users.urls")),
@@ -51,6 +50,7 @@ urlpatterns = [
 
     path("api-auth/login/", LoginView.as_view(), name="login"),
     path('api-auth/', include('rest_framework.urls')),
+    path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]
 
 if settings.DEBUG:
