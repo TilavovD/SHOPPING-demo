@@ -8,7 +8,8 @@ from users.models import User
 class UserDetailSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ("first_name", "last_name", "phone_number", "gender", "birth_date", "city", "image", "is_agree")
+        fields = ("first_name", "last_name", "phone_number", "gender", "birth_date", "city", "image")
+        read_only_fields = ('phone_number', )
 
 
 class UserRegisterSerializer(ModelSerializer):

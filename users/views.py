@@ -1,5 +1,5 @@
-from django.contrib.auth import login
-from rest_framework.generics import RetrieveAPIView, CreateAPIView
+from django.contrib.auth import login, logout
+from rest_framework.generics import RetrieveUpdateAPIView, CreateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from users.models import User
@@ -10,7 +10,7 @@ from rest_framework import permissions
 
 # Create your views here.
 
-class UserDetailView(RetrieveAPIView):
+class UserDetailView(RetrieveUpdateAPIView):
     serializer_class = UserDetailSerializer
     permission_classes = (permissions.IsAuthenticated, )
 
@@ -70,8 +70,18 @@ class LoginView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         login(request, user)
-        print(user.id)
+
         return Response({
             "status": 200,
             "message": "User successfully logged in"
         })
+
+
+class LogOutView(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request):
+        request.user.auth_token.delete()
+        logout(request)
+
+        return Response('User Logged out successfully')
